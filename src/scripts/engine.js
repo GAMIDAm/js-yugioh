@@ -15,6 +15,12 @@ const state = {
         player: document.getElementById("player-field-card"),
         computer: document.getElementById("computer-field-card"),
     },
+    playerSides: {
+        player1: "player-cards",
+        player1BOX: document.querySelector("#player-cards"),
+        player2: "computer-cards",
+        player2BOX: document.querySelector("#computer-cards"),
+    },
     actions: {
         button: document.getElementById("next-duel"),
     },
@@ -84,6 +90,67 @@ async function createCardImage(Idcard, fieldSide) {
     return cardImage;
 }
 
+async function setCardsField(cardId) {
+    await removeAllCardsImages();
+
+    let computerCardId = await getRandomCardId();
+
+    state.fieldCards.player.style.display = "block";
+    state.fieldCards.computer.style.display = "block";
+    
+    state.cardSprites.avatar.src = "";
+    state.cardSprites.name.innerText = "";
+    state.cardSprites.type.innerText = "";
+
+    state.fieldCards.player.src = cardData[cardId].img;
+    state.fieldCards.computer.src = cardData[computerCardId].img;
+
+    let duelResults = await checkDuelResults(cardId, computerCardId);
+
+    await updateScore();
+    await drawButton(duelResults);
+}
+
+async function drawButton(text) {
+    state.actions.button.innerText = text;
+    state.actions.button.style.display = "block";
+
+
+}
+
+async function updateScore() {
+    state.score.scoreBox.innerText = `Win: ${state.score.playerScore} | Lose: ${state.score.computerScore}`;
+}
+
+async function checkDuelResults(playerCardId, computerCardId) {
+    let duelResults = "Empate";
+
+    let playerCard = cardData[playerCardId];
+
+    if (playerCard.WinOf.includes(computerCardId)) {
+        duelResults = "Ganhou";
+        state.score.playerScore++;
+        await playAudio("win");
+    }
+    if (playerCard.LoseOf.includes(computerCardId)) {
+        duelResults = "Perdeu";
+        state.score.computerScore++;
+        await playAudio("lose");
+    } 
+
+    return duelResults;
+}
+
+async function removeAllCardsImages() {
+    let {player2BOX, player1BOX} = state.playerSides;
+    let imgElements = player2BOX.querySelectorAll("img");
+    imgElements.forEach((img) => img.remove());
+
+
+    imgElements = player1BOX.querySelectorAll("img");
+    imgElements.forEach((img) => img.remove());
+}
+
 async function drawSelectedCard(index) {
     state.cardSprites.avatar.src = cardData[index].img;
     state.cardSprites.name.innerText = cardData[index].name;
@@ -100,10 +167,28 @@ async function drawCards(cardNumber, fieldSide) {
     }
 }
 
+async function resetDuel() {
+    state.cardSprites.avatar.src = "";
+    state.actions.button.style.display = "none";
+
+    state.fieldCards.player.style.display = "none";
+    state.fieldCards.computer.style.display = "none";
+
+    init();
+}
+
+async function playAudio(status) {
+    const audio = new Audio(`./src/assets/audios/${status}.wav`);
+    audio.play();
+}
+
 function init() {
     drawCards(5, playerSides.player1);
     drawCards(5, playerSides.player2);
 
+    const bgm = document.getElementById("bgm");
+    bgm.play();
+    bgm.volume = 0.2;
 }
 
 init();

@@ -12,6 +12,9 @@
         href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
 
+    <!-- fav icon -->
+     <link rel="shortcut icon" href="./src/assets/favicon/favicon.ico" type="image/x-icon">
+
 
     <!-- Styles -->
     <link rel="stylesheet" href="./src/styles/reset.css">
@@ -23,6 +26,9 @@
 </head>
 
 <body>
+    <audio id="bgm" loop>
+        <source src="./src/assets/audios/egyptian_duel.mp3" type="audio/mp3"/>
+    </audio>
 
     <div class="bg-video">
         <video class="video" autoplay loop muted>
@@ -62,7 +68,7 @@
                         </div>
                         <img height="100px" src="./src/assets/icons/millenium2.png">
                         <div class="card-infield">
-                            <img id="player-field-card" height="180px" width="125px">
+                            <img id="computer-field-card" height="180px" width="125px">
                         </div>
                     </div>
                     <div class="versus-bottom">
